@@ -4,20 +4,48 @@ const hideXElements = () => {
 
   // Only hide if the user is on the Home Feed
   if (path === "/home") {
-    // Hide the main feed
-    const feed = document.querySelector(
-      '[aria-label="Timeline: Your Home Timeline"], div[data-testid="primaryColumn"]'
-    );
-    if (feed) {
-      feed.style.display = "none";
-    }
-
     // Hide the "Subscribe to Premium" section
     const premium = document.querySelector(
       '[aria-label="Subscribe to Premium"], div[aria-labelledby*="Subscribe"]'
     );
     if (premium) {
       premium.style.display = "none";
+    }
+
+    const contentOfForYou = document.querySelector(
+      `[aria-labelledby="accessible-list-0"]`
+    );
+    if (contentOfForYou) {
+      contentOfForYou.style.display = "none";
+    }
+
+    const removeNotifyButton = document.querySelector(
+      `[aria-label="New posts are available. Push the period key to go to the them."]`
+    );
+    if (removeNotifyButton) {
+      removeNotifyButton.style.display = "none";
+    }
+
+    // Finde das Div mit der Rolle "tablist"
+    const tabList = document.querySelector('[role="tablist"]');
+
+    // Überprüfe, ob das Element gefunden wurde
+    if (tabList) {
+      // Finde alle Kind-Elemente mit der Rolle "presentation"
+      const allTabs = tabList.querySelectorAll('[role="presentation"]');
+
+      // Überprüfe, ob mindestens zwei Tabs gefunden wurden
+      if (allTabs.length >= 2) {
+        // Wähle den zweiten Tab aus (Index 1, da Arrays bei 0 beginnen)
+        const firstTab = allTabs[0];
+        firstTab.style.display = "none";
+        const thirdTab = allTabs[2];
+        thirdTab.style.display="none";
+      } else {
+        console.error("Es wurden nicht genügend Tabs gefunden.");
+      }
+    } else {
+      console.error('Kein Element mit role="tablist" gefunden.');
     }
 
     // Hide the "Live on X" section
@@ -68,3 +96,52 @@ hideXElements();
 // Observe the page for any changes and hide elements dynamically
 const observer = new MutationObserver(hideXElements);
 observer.observe(document.body, { childList: true, subtree: true });
+
+/* Responsible for Chrome Storage and Toggle Update */
+
+// Observer zur Beobachtung von DOM-Änderungen einrichten
+function observeDOMForRecommendations(callback) {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Funktion, um das Element zu verstecken oder anzuzeigen
+function toggleFeed(hideFeed) {
+  const feedElement = document.querySelector(`[aria-labelledby="accessible-list-1"]`);
+
+  // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
+  if (feedElement && window.location.pathname === "/home") {
+    // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
+    feedElement.style.display = hideFeed ? "block" : "none";
+  }
+}
+
+// Funktion zur Initialisierung des MutationObservers für das Feed-Element
+function observeDOMForFeed() {
+  const observer = new MutationObserver((mutations) => {
+    chrome.storage.local.get(["hideFeed"], (res) => {
+      const hideFeed = res.hideFeed ?? false; // Fallback zu false, wenn nicht gesetzt
+      toggleFeed(hideFeed); // Überprüfe, ob der Feed angezeigt werden soll
+    });
+  });
+
+  // Beobachte Änderungen an der Seite (dynamische Inhalte)
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+// Initialen Wert aus dem Storage abrufen und den Feed sofort anpassen
+chrome.storage.local.get(["hideFeed"], (res) => {
+  const hideFeed = res.hideFeed ?? false;
+  toggleFeed(hideFeed); // Feed initial anzeigen/ausblenden
+  observeDOMForFeed(); // Beobachte Änderungen am Feed-Element
+});
+
+// Echtzeit-Überwachung von Änderungen im Storage
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes.hideFeed) {
+    toggleFeed(changes.hideFeed.newValue); // Ändert den Feed, wenn der Wert sich ändert
+  }
+});
