@@ -12,11 +12,9 @@ const hideXElements = () => {
       premium.style.display = "none";
     }
 
-    const contentOfForYou = document.querySelector(
-      `[aria-labelledby="accessible-list-0"]`
-    );
+    const contentOfForYou = document.querySelector('[aria-label="Timeline: Your Home Timeline"');
     if (contentOfForYou) {
-      contentOfForYou.style.display = "none";
+      contentOfForYou.style.visibility = "visible";
     }
 
     const removeNotifyButton = document.querySelector(
@@ -24,6 +22,22 @@ const hideXElements = () => {
     );
     if (removeNotifyButton) {
       removeNotifyButton.style.display = "none";
+    }
+
+    // ScrollSnap-next Button Wrapper Right
+    const rightNext = document.querySelector(
+      '[data-testid="ScrollSnap-nextButtonWrapper"'
+    );
+    if (rightNext) {
+      rightNext.style.display = "none";
+    }
+
+    // ScrollSnap-next Button Wrapper Left
+    const leftNext = document.querySelector(
+      '[data-testid="ScrollSnap-prevButtonWrapper"'
+    );
+    if (leftNext) {
+      leftNext.style.display = "none";
     }
 
     // Finde das Div mit der Rolle "tablist"
@@ -40,7 +54,7 @@ const hideXElements = () => {
         const firstTab = allTabs[0];
         firstTab.style.display = "none";
         const thirdTab = allTabs[2];
-        thirdTab.style.display="none";
+        thirdTab.style.display = "none";
       } else {
         console.error("Es wurden nicht genügend Tabs gefunden.");
       }
@@ -107,12 +121,12 @@ function observeDOMForRecommendations(callback) {
 
 // Funktion, um das Element zu verstecken oder anzuzeigen
 function toggleFeed(hideFeed) {
-  const feedElement = document.querySelector(`[aria-labelledby="accessible-list-1"]`);
+  const feedElement = document.querySelector('[aria-label="Timeline: Your Home Timeline"');
 
   // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
   if (feedElement && window.location.pathname === "/home") {
     // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
-    feedElement.style.display = hideFeed ? "block" : "none";
+    feedElement.style.visibility = hideFeed ? "visible" : "hidden";
   }
 }
 
