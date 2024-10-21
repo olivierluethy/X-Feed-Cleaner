@@ -13,19 +13,12 @@ const hideXElements = () => {
     }
 
     // Feed blocking for following content
-    const inblockOfForYou = document.querySelector(
-      `[aria-labelledby="accessible-list-0"]`
+    const feedElement = document.querySelector(
+      '[aria-label="Timeline: Your Home Timeline"]'
     );
-    if (inblockOfForYou) {
-      inblockOfForYou.style.visibility = "hidden";
-    }
 
-    // Content blocking for following content
-    const contentOfForYou = document.querySelector(
-      '[aria-label="Timeline: Your Home Timeline"'
-    );
-    if (contentOfForYou) {
-      contentOfForYou.style.visibility = "hidden";
+    if (feedElement) {
+      feedElement.style.visibility = "hidden";
     }
 
     const removeNotifyButton = document.querySelector(
@@ -132,20 +125,15 @@ function observeDOMForRecommendations(callback) {
 
 // Funktion, um das Element zu verstecken oder anzuzeigen
 function toggleFeed(hideFeed) {
-  const feedElement = document.querySelector(
-    '[aria-label="Timeline: Your Home Timeline"'
-  );
-
   // Feed blocking for following content
-  const inblockOfForYou = document.querySelector(
-    `[aria-labelledby="accessible-list-0"]`
+  const feedElement = document.querySelector(
+    '[aria-label="Timeline: Your Home Timeline"]'
   );
 
   // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
   if (feedElement && window.location.pathname === "/home") {
     // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
     feedElement.style.visibility = hideFeed ? "visible" : "hidden";
-    inblockOfForYou.style.visibility = hideFeed ? "visible" : "hidden";
   }
 }
 
