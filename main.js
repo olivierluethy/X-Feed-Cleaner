@@ -2,6 +2,26 @@
 const hideXElements = () => {
   const path = window.location.pathname;
 
+  cheatBlocker();
+
+  // Start - Remove stuff from navigation
+  const grok = document.querySelector('a[href="/i/grok"][aria-label="Grok"][role="link"]');
+  if(grok){
+    grok.style.display="none";
+  }
+  const premium = document.querySelector('a[href="/i/premium_sign_up"][aria-label="Premium"][role="link"]');
+  if(premium){
+    premium.style.display="none";
+  }
+  const verifiedOrgs = document.querySelector('a[href="/i/verified-orgs-signup"][aria-label="Verified Orgs"][role="link"]');
+  if(verifiedOrgs){
+    verifiedOrgs.style.display="none";
+  }
+  const notifications = document.querySelector('a[href="/notifications"][aria-label="Notifications"][role="link"]');
+  if(notifications){
+    notifications.style.display="none";
+  }
+
   // Only hide if the user is on the Home Feed
   if (path === "/home") {
     // Hide the "Subscribe to Premium" section
@@ -114,55 +134,3 @@ hideXElements();
 // Observe the page for any changes and hide elements dynamically
 const observer = new MutationObserver(hideXElements);
 observer.observe(document.body, { childList: true, subtree: true });
-
-/* Responsible for Chrome Storage and Toggle Update */
-
-// Observer zur Beobachtung von DOM-Änderungen einrichten
-function observeDOMForRecommendations(callback) {
-  const observer = new MutationObserver(callback);
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
-// Funktion, um das Element zu verstecken oder anzuzeigen
-function toggleFeed(hideFeed) {
-  // Feed blocking for following content
-  const feedElement = document.querySelector(
-    '[aria-label="Timeline: Your Home Timeline"]'
-  );
-
-  // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
-  if (feedElement && window.location.pathname === "/home") {
-    // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
-    feedElement.style.visibility = hideFeed ? "visible" : "hidden";
-  }
-}
-
-// Funktion zur Initialisierung des MutationObservers für das Feed-Element
-function observeDOMForFeed() {
-  const observer = new MutationObserver((mutations) => {
-    chrome.storage.local.get(["hideFeed"], (res) => {
-      const hideFeed = res.hideFeed ?? false; // Fallback zu false, wenn nicht gesetzt
-      toggleFeed(hideFeed); // Überprüfe, ob der Feed angezeigt werden soll
-    });
-  });
-
-  // Beobachte Änderungen an der Seite (dynamische Inhalte)
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-// Initialen Wert aus dem Storage abrufen und den Feed sofort anpassen
-chrome.storage.local.get(["hideFeed"], (res) => {
-  const hideFeed = res.hideFeed ?? false;
-  toggleFeed(hideFeed); // Feed initial anzeigen/ausblenden
-  observeDOMForFeed(); // Beobachte Änderungen am Feed-Element
-});
-
-// Echtzeit-Überwachung von Änderungen im Storage
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.hideFeed) {
-    toggleFeed(changes.hideFeed.newValue); // Ändert den Feed, wenn der Wert sich ändert
-  }
-});
