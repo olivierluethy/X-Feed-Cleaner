@@ -2,8 +2,6 @@
 const hideXElements = () => {
   const path = window.location.pathname;
 
-  cheatBlocker();
-
   // Start - Remove stuff from navigation
   const grok = document.querySelector(
     'a[href="/i/grok"][aria-label="Grok"][role="link"]'
@@ -38,15 +36,6 @@ const hideXElements = () => {
     );
     if (premium) {
       premium.style.display = "none";
-    }
-
-    // Feed blocking for following content
-    const feedElement = document.querySelector(
-      '[aria-label="Timeline: Your Home Timeline"]'
-    );
-
-    if (feedElement) {
-      feedElement.style.visibility = "hidden";
     }
 
     const removeNotifyButton = document.querySelector(
@@ -84,45 +73,48 @@ const hideXElements = () => {
       if (allTabs.length >= 2) {
         // Wähle den zweiten Tab aus (Index 1, da Arrays bei 0 beginnen)
         const firstTab = allTabs[0];
-        firstTab.style.display = "none";
+        if (firstTab) {
+          firstTab.style.display = "none";
+        }
         const thirdTab = allTabs[2];
-        thirdTab.style.display = "none";
+        if (thirdTab) {
+          thirdTab.style.display = "none";
+        }
       } else {
         console.error("Es wurden nicht genügend Tabs gefunden.");
       }
     } else {
       console.error('Kein Element mit role="tablist" gefunden.');
     }
-
-    // Hide the "Live on X" section
-    const liveOnX = document.querySelector(
-      'section[aria-labelledby*="Live"], div[aria-label="Live"]'
-    );
-    if (liveOnX) {
-      liveOnX.style.display = "none";
-    }
-
-    // Hide the "Trends for you" section
-    const trends = document.querySelector(
-      'section[aria-labelledby*="Trends"], div[data-testid="sidebarColumn"]'
-    );
-    if (trends) {
-      trends.style.display = "none";
-    }
-
-    console.log("Elements on /home page hidden");
-  } else if (path === "/explore") {
-    const explore = document.querySelector(
-      'div[aria-label="Timeline: Explore"]'
-    );
-    if (explore) {
-      explore.style.display = "none";
-    }
+  }
+  // Check if the path matches the pattern
+  if (/^\/[^/]+\/communities\/explore/.test(path)) {
+    console.log("Your exploring the communities!");
     const tablist = document.querySelector(
       'div[role="tablist"][data-testid="ScrollSnap-List"'
     );
     if (tablist) {
       tablist.style.display = "none";
+    }
+
+    // If you don't follow any community
+    const homeTimeline = document.querySelector(
+      'div[aria-label="Home timeline"]'
+    );
+
+    if (homeTimeline) {
+      const thirdDiv = homeTimeline.children[2]; // Access the third child element
+
+      // Now you can manipulate the third div as needed:
+      thirdDiv.style.display = "none";
+      // https://www.loom.com/share/bc6cef219ef641d9b6a80726e7775ef6?sid=004d8f79-4fdb-4474-893c-25436ebacf37
+    } else {
+      console.log("Home timeline div not found.");
+    }
+
+    const section = document.querySelector('section[role="region"]');
+    if (section) {
+      section.style.display = "none";
     }
   }
 
@@ -155,3 +147,55 @@ hideXElements();
 // Observe the page for any changes and hide elements dynamically
 const observer = new MutationObserver(hideXElements);
 observer.observe(document.body, { childList: true, subtree: true });
+
+/* Responsible for Chrome Storage and Toggle Update */
+
+// Observer zur Beobachtung von DOM-Änderungen einrichten
+function observeDOMForRecommendations(callback) {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Funktion, um das Element zu verstecken oder anzuzeigen
+function toggleFeed(hideFeed) {
+  // Feed blocking for following content
+  const feedElement = document.querySelector(
+    '[aria-label="Timeline: Your Home Timeline"]'
+  );
+
+  // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
+  if (feedElement && window.location.pathname === "/home") {
+    // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
+    feedElement.style.visibility = hideFeed ? "visible" : "hidden";
+  }
+}
+
+// Funktion zur Initialisierung des MutationObservers für das Feed-Element
+function observeDOMForFeed() {
+  const observer = new MutationObserver((mutations) => {
+    chrome.storage.local.get(["hideFeed"], (res) => {
+      const hideFeed = res.hideFeed ?? false; // Fallback zu false, wenn nicht gesetzt
+      toggleFeed(hideFeed); // Überprüfe, ob der Feed angezeigt werden soll
+    });
+  });
+
+  // Beobachte Änderungen an der Seite (dynamische Inhalte)
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+// Initialen Wert aus dem Storage abrufen und den Feed sofort anpassen
+chrome.storage.local.get(["hideFeed"], (res) => {
+  const hideFeed = res.hideFeed ?? false;
+  toggleFeed(hideFeed); // Feed initial anzeigen/ausblenden
+  observeDOMForFeed(); // Beobachte Änderungen am Feed-Element
+});
+
+// Echtzeit-Überwachung von Änderungen im Storage
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes.hideFeed) {
+    toggleFeed(changes.hideFeed.newValue); // Ändert den Feed, wenn der Wert sich ändert
+  }
+});
