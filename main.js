@@ -3,6 +3,10 @@ const hideXElements = () => {
   const path = window.location.pathname;
 
   // Start - Remove stuff from navigation
+  const blueDot = document.querySelector("div[aria-label='undefined unread items']");
+  if(blueDot){
+    blueDot.style.display="none";
+  }
   const grok = document.querySelector(
     'a[href="/i/grok"][aria-label="Grok"][role="link"]'
   );
