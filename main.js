@@ -87,6 +87,16 @@ const hideXElements = () => {
       console.error('Kein Element mit role="tablist" gefunden.');
     }
   }
+  // If you follow a community
+  if (/^\/[^/]+\/communities\/?$/.test(path)) {
+    const tabList = document.querySelector(
+      'div[role="tablist"][data-testid="ScrollSnap-List"]'
+    );
+    if (tabList) {
+      tabList.style.display = "none";
+    }
+  }
+  // Remove community suggestion including their representing content
   if (window.location.href.includes("x.com/i/communities/suggested")) {
     function hideElements() {
       // Find the main div with aria-label="Home timeline"
@@ -132,7 +142,7 @@ const hideXElements = () => {
     // Observe the document for changes
     observer.observe(document.body, { childList: true, subtree: true });
   }
-
+  // Display community suggestions while you're searching for one
   if (window.location.href.includes("x.com/i/communities/suggested?q=")) {
     function hideElements() {
       // Find the main div with aria-label="Home timeline"
