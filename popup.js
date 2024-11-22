@@ -24,3 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleText(isChecked); // Aktualisiere den Text sofort
   });
 });
+
+document.getElementById("goToFAQ").addEventListener("click", function () {
+  chrome.tabs.create({ url: chrome.runtime.getURL("/pages/timetable.html") });
+});

@@ -91,6 +91,22 @@ const hideXElements = () => {
       console.error('Kein Element mit role="tablist" gefunden.');
     }
   }
+  // Only hide if the user is on the Explore Page
+  if (path === "/explore") {
+    const tabList = document.querySelector(
+      'div[role="tablist"][data-testid="ScrollSnap-List"]'
+    );
+    if (tabList) {
+      tabList.style.display = "none";
+    }
+
+    const feed = document.querySelector(
+      'div[aria-label="Timeline: Explore"]'
+    );
+    if (feed) {
+      feed.style.display = "none";
+    }
+  }
   // If you follow a community
   if (/^\/[^/]+\/communities\/?$/.test(path)) {
     const tabList = document.querySelector(
