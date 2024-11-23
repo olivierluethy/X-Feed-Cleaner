@@ -3,9 +3,11 @@ const hideXElements = () => {
   const path = window.location.pathname;
 
   // Start - Remove stuff from navigation
-  const blueDot = document.querySelector("div[aria-label='undefined unread items']");
-  if(blueDot){
-    blueDot.style.display="none";
+  const blueDot = document.querySelector(
+    "div[aria-label='undefined unread items']"
+  );
+  if (blueDot) {
+    blueDot.style.display = "none";
   }
   const grok = document.querySelector(
     'a[href="/i/grok"][aria-label="Grok"][role="link"]'
@@ -34,6 +36,17 @@ const hideXElements = () => {
 
   // Only hide if the user is on the Home Feed
   if (path === "/home") {
+    // Jump to "following" page
+    autoClickOnce();
+    // Retrieve the value of hidefeed from Chrome Storage
+    chrome.storage.sync.get("hidefeed", function (data) {
+      if (data.hidefeed === true) {
+        console.log("Times up!");
+        // Start tracking time if hidefeed is true
+        startTrackingTime();
+      }
+    });
+
     // Hide the "Subscribe to Premium" section
     const premium = document.querySelector(
       '[aria-label="Subscribe to Premium"], div[aria-labelledby*="Subscribe"]'
@@ -100,9 +113,7 @@ const hideXElements = () => {
       tabList.style.display = "none";
     }
 
-    const feed = document.querySelector(
-      'div[aria-label="Timeline: Explore"]'
-    );
+    const feed = document.querySelector('div[aria-label="Timeline: Explore"]');
     if (feed) {
       feed.style.display = "none";
     }
