@@ -14,7 +14,13 @@
   "content_scripts": [
     {
       "matches": ["https://x.com/*", "https://twitter.com/*"],
-      "js": ["cheatBlocker.js", "trackingTime.js", "autoclickOnce.js", "main.js"]
+      "js": [
+        "cheatBlocker.js",
+        "trackingTime.js",
+        "autoclickOnce.js",
+        "replaceFaviconNotyNumber.js",
+        "main.js"
+      ]
     }
   ],
   "permissions": ["storage"]

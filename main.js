@@ -2,6 +2,9 @@
 const hideXElements = () => {
   const path = window.location.pathname;
 
+  // Call the function
+  updateTitleAndFavicon();
+
   // Start - Remove stuff from navigation
   const blueDot = document.querySelector(
     "div[aria-label='undefined unread items']"
