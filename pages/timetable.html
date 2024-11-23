@@ -4,13 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="timetable.css" />
-    <link rel="shortcut icon" href="../icon/icon.png" />
+    <link rel="shortcut icon" href="../logo.png" />
     <script src="timetable.js" defer></script>
-    <title>Distraction Table</title>
+    <title>Distraction time table</title>
   </head>
   <body>
-    <h1 style="text-align: center;">Distraction Table</h1>
-    <h3 style="text-align: center;">Few how much time you waste on by consuming content created from others you follow</h3>
+    <h1 style="text-align: center">Distraction time table</h1>
+    <h3 style="text-align: center">
+      Think about how much time you waste consuming content created by others
+      you follow.
+    </h3>
     <div class="statistics">
       <table
         style="
@@ -23,17 +26,12 @@
         "
       >
         <thead>
-          <tr style="background-color: white;color: black;">
+          <tr style="background-color: white; color: black">
             <th style="padding: 12px">Date</th>
-            <th style="padding: 12px">Amount of times</th>
+            <th style="padding: 12px">Time consumed</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td id="date" style="padding: 10px"></td>
-            <td id="amount" style="padding: 10px"></td>
-          </tr>
-        </tbody>
+        <tbody id="logTableBody"></tbody>
       </table>
     </div>
   </body>

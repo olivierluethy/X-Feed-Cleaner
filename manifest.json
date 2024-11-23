@@ -16,7 +16,6 @@
       "matches": ["https://x.com/*", "https://twitter.com/*"],
       "js": [
         "cheatBlocker.js",
-        "trackingTime.js",
         "autoclickOnce.js",
         "replaceFaviconNotyNumber.js",
         "main.js"

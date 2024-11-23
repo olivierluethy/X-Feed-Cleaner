@@ -1,6 +1,12 @@
 body {
   background-color: black;
   color: white;
+  background-image: url(../logoGray.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 100vh; /* Setzt die Höhe des Bodys auf 100% der Viewport-Höhe */
+  margin: 0; /* Entfernt den Standardmargin des Bodys */
 }
 
 .statistics table {
@@ -18,6 +24,7 @@ body {
 }
 .statistics tr {
   text-align: left;
+  background-color: black;
 }
 
 .statistics thead {

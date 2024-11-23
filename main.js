@@ -41,14 +41,6 @@ const hideXElements = () => {
   if (path === "/home") {
     // Jump to "following" page
     autoClickOnce();
-    // Retrieve the value of hidefeed from Chrome Storage
-    chrome.storage.sync.get("hidefeed", function (data) {
-      if (data.hidefeed === true) {
-        console.log("Times up!");
-        // Start tracking time if hidefeed is true
-        startTrackingTime();
-      }
-    });
 
     // Hide the "Subscribe to Premium" section
     const premium = document.querySelector(
@@ -290,36 +282,122 @@ observer.observe(document.body, { childList: true, subtree: true });
 
 /* Responsible for Chrome Storage and Toggle Update */
 
-// Observer zur Beobachtung von DOM-Änderungen einrichten
-function observeDOMForRecommendations(callback) {
-  const observer = new MutationObserver(callback);
-  observer.observe(document.body, { childList: true, subtree: true });
+let stopwatchInterval;
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let isStopwatchRunning = false;
+
+function updateStopwatch() {
+  seconds++;
+  if (seconds >= 60) {
+    seconds = 0;
+    minutes++;
+  }
+  if (minutes >= 60) {
+    minutes = 0;
+    hours++;
+  }
+
+  // Zeit in der Konsole ausgeben
+  const timeString = `${String(hours).padStart(2, "0")}:${String(
+    minutes
+  ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  console.log(timeString);
+
+  // Zeit im Chrome-Storage speichern
+  storeWastedTime();
+}
+
+function timeStringToSeconds(timeString) {
+  const [h, m, s] = timeString.split(":").map(Number);
+  return h * 3600 + m * 60 + s;
+}
+
+function secondsToTimeString(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(
+    s
+  ).padStart(2, "0")}`;
+}
+
+let lastLoggedSeconds = 0; // Speichert die letzte geloggte Zeit (für Differenzen)
+
+function storeWastedTime() {
+  const today = new Date().toISOString().split("T")[0]; // Nur das Datum (YYYY-MM-DD)
+  const currentTimeInSeconds = hours * 3600 + minutes * 60 + seconds;
+
+  // Differenz zur letzten Speicherung berechnen
+  const deltaTimeInSeconds = currentTimeInSeconds - lastLoggedSeconds;
+
+  // Bestehende Daten abrufen und aktualisieren
+  chrome.storage.local.get(["wastedTime"], (res) => {
+    const wastedTime = res.wastedTime || {};
+    const previousTime = wastedTime[today]
+      ? timeStringToSeconds(wastedTime[today])
+      : 0;
+
+    // Addiere nur die neue Zeitdifferenz
+    const newTimeInSeconds = previousTime + deltaTimeInSeconds;
+    wastedTime[today] = secondsToTimeString(newTimeInSeconds);
+
+    // Speichern und `lastLoggedSeconds` aktualisieren
+    chrome.storage.local.set({ wastedTime }, () => {
+      console.log("Aktualisierte wastedTime:", wastedTime);
+      lastLoggedSeconds = currentTimeInSeconds; // Aktualisiere die letzte geloggte Zeit
+    });
+  });
+}
+
+function startStopwatch() {
+  if (!isStopwatchRunning) {
+    isStopwatchRunning = true;
+    stopwatchInterval = setInterval(updateStopwatch, 1000);
+    console.log("Stopwatch gestartet");
+  }
+}
+
+function stopStopwatch() {
+  if (isStopwatchRunning) {
+    clearInterval(stopwatchInterval);
+    isStopwatchRunning = false;
+
+    // Letztes Update, bevor die Stoppuhr gestoppt wird
+    storeWastedTime();
+    console.log("Stopwatch gestoppt");
+  }
 }
 
 // Funktion, um das Element zu verstecken oder anzuzeigen
 function toggleFeed(hideFeed) {
-  // Feed blocking for following content
   const feedElement = document.querySelector(
     '[aria-label="Timeline: Your Home Timeline"]'
   );
 
-  // Überprüfe, ob das Element existiert und ob die aktuelle Seite die Abonnementseite ist
   if (feedElement && window.location.pathname === "/home") {
-    // Der Feed wird NUR angezeigt, wenn hideFeed TRUE ist, ansonsten ausgeblendet
     feedElement.style.visibility = hideFeed ? "visible" : "hidden";
+
+    if (hideFeed) {
+      startStopwatch();
+    } else {
+      stopStopwatch();
+    }
+  } else {
+    stopStopwatch(); // Stelle sicher, dass die Stoppuhr angehalten wird, wenn die Bedingungen nicht erfüllt sind
   }
 }
 
 // Funktion zur Initialisierung des MutationObservers für das Feed-Element
 function observeDOMForFeed() {
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(() => {
     chrome.storage.local.get(["hideFeed"], (res) => {
-      const hideFeed = res.hideFeed ?? false; // Fallback zu false, wenn nicht gesetzt
-      toggleFeed(hideFeed); // Überprüfe, ob der Feed angezeigt werden soll
+      const hideFeed = res.hideFeed ?? false;
+      toggleFeed(hideFeed);
     });
   });
 
-  // Beobachte Änderungen an der Seite (dynamische Inhalte)
   observer.observe(document.body, {
     childList: true,
     subtree: true,
@@ -329,13 +407,13 @@ function observeDOMForFeed() {
 // Initialen Wert aus dem Storage abrufen und den Feed sofort anpassen
 chrome.storage.local.get(["hideFeed"], (res) => {
   const hideFeed = res.hideFeed ?? false;
-  toggleFeed(hideFeed); // Feed initial anzeigen/ausblenden
-  observeDOMForFeed(); // Beobachte Änderungen am Feed-Element
+  toggleFeed(hideFeed);
+  observeDOMForFeed();
 });
 
 // Echtzeit-Überwachung von Änderungen im Storage
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.hideFeed) {
-    toggleFeed(changes.hideFeed.newValue); // Ändert den Feed, wenn der Wert sich ändert
+    toggleFeed(changes.hideFeed.newValue);
   }
 });
