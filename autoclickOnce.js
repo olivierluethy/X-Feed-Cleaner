@@ -1,36 +1,32 @@
-// Function to auto-click the second div once
 function autoClickOnce() {
-  // Check if the element has already been clicked
-  chrome.storage.local.get(["hasClicked"], function (result) {
-    if (result.hasClicked) {
-      console.log("The second div has already been clicked.");
-      return; // Exit if it has already been clicked
-    }
+  /* https://www.blackbox.ai/share/828f1eb9-701d-44b7-a0cf-e922ef31b081 */
+  // Suche das div mit role="tablist" und data-testid="ScrollSnap-List"
+  const tablist = document.querySelector(
+    'div[role="tablist"][data-testid="ScrollSnap-List"]'
+  );
 
-    // Select the parent div with role="tablist" and data-testid="ScrollSnap-List"
-    const tablist = document.querySelector(
-      'div[role="tablist"][data-testid="ScrollSnap-List"]'
+  if (tablist) {
+    // Suche das zweite div mit role="presentation" innerhalb des tablist
+    const presentationDivs = tablist.querySelectorAll(
+      'div[role="presentation"]'
     );
+    if (presentationDivs.length > 1) {
+      const secondPresentationDiv = presentationDivs[1];
 
-    if (tablist) {
-      // Select all the child div elements within the tablist
-      const divs = tablist.querySelectorAll("div");
-
-      // Check if there is a second div and click it
-      if (divs.length > 1) {
-        const secondDiv = divs[1]; // Get the second div (index 1)
-        secondDiv.click(); // Simulate a click on the second div
-        console.log("Second div clicked!");
-
-        // Store the click state in Chrome storage
-        chrome.storage.local.set({ hasClicked: true }, function () {
-          console.log("Click state saved to storage.");
-        });
+      // Suche das <a> Element innerhalb des zweiten presentation div
+      const anchor = secondPresentationDiv.querySelector(
+        'a[role="tab"][href="/home"]'
+      );
+      if (anchor) {
+        // Klicke auf das <a> Element
+        anchor.click();
       } else {
-        console.log("Less than two divs found inside the tablist.");
+        console.error('Das <a> Element mit href="/home" wurde nicht gefunden.');
       }
     } else {
-      console.log("Tablist not found.");
+      console.error("Es gibt nicht genügend presentation divs.");
     }
-  });
+  } else {
+    console.error("Das tablist Element wurde nicht gefunden.");
+  }
 }
