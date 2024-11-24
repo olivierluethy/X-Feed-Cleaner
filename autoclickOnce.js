@@ -1,3 +1,5 @@
+let counter = 0;
+
 function autoClickOnce() {
   /* https://www.blackbox.ai/share/828f1eb9-701d-44b7-a0cf-e922ef31b081 */
   // Suche das div mit role="tablist" und data-testid="ScrollSnap-List"
@@ -17,9 +19,10 @@ function autoClickOnce() {
       const anchor = secondPresentationDiv.querySelector(
         'a[role="tab"][href="/home"]'
       );
-      if (anchor) {
+      if (anchor && counter == 0) {
         // Klicke auf das <a> Element
         anchor.click();
+        counter++;
       } else {
         console.error('Das <a> Element mit href="/home" wurde nicht gefunden.');
       }
