@@ -30,10 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateTodayTime() {
     chrome.storage.local.get(["wastedTime"], (res) => {
       const wastedTime = res.wastedTime || {};
-      const todayTime = wastedTime[today] || "00:00:00"; // Fallback-Wert, wenn nichts für heute vorhanden ist
-      document.getElementById(
-        "goToFAQ"
-      ).innerHTML = `Time spent today: ${todayTime}`;
+      const todayTime = wastedTime[today] || "No time spent today"; // Fallback-Wert, wenn nichts für heute vorhanden ist
+      if (todayTime == "No time spent today") {
+        document.getElementById("goToFAQ").innerHTML = `${todayTime}`;
+      } else {
+        document.getElementById(
+          "goToFAQ"
+        ).innerHTML = `Time spent today: ${todayTime}`;
+      }
     });
   }
 
