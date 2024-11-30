@@ -1,7 +1,8 @@
+// Always in use; That's why on top
+const path = window.location.pathname;
+
 // Function to hide specific elements on X.com (feed, trends, premium, live on X)
 const hideXElements = () => {
-  const path = window.location.pathname;
-
   // Call the function
   updateTitleAndFavicon();
 
@@ -36,7 +37,6 @@ const hideXElements = () => {
   if (notifications) {
     notifications.style.display = "none";
   }
-
   // Only hide if the user is on the Home Feed
   if (path === "/home") {
     // Jump to "following" page
@@ -121,6 +121,15 @@ const hideXElements = () => {
     if (tabList) {
       tabList.style.display = "none";
     }
+  }
+  // If someone jumps to a post, redirect to normal page
+  if (window.location.pathname.match(/\/status\/\d+/)) {
+    chrome.storage.local.get(["hideFeed"], (res) => {
+      const hideFeed = res.hideFeed ?? false;
+      if (!hideFeed) {
+        window.location.href = "https://x.com/home";
+      }
+    });
   }
   // Remove community suggestion including their representing content
   if (window.location.href.includes("x.com/i/communities/suggested")) {
@@ -249,7 +258,23 @@ const hideXElements = () => {
       section.style.display = "none";
     }
   }
+  // If user jumps to user account content overview
+  if (/^\/[^/]+$/.test(path)) {
+    chrome.storage.local.get(["hideFeed"], (res) => {
+      const hideFeed = res.hideFeed ?? false;
 
+      // Check if the current page is not one of the excluded pages
+      const currentUrl = window.location.href;
+      if (
+        !hideFeed &&
+        !currentUrl.includes("x.com/home") &&
+        !currentUrl.includes("x.com/explore") &&
+        !currentUrl.includes("x.com/i")
+      ) {
+        window.location.href = "https://x.com/home";
+      }
+    });
+  }
   // Hide the "Live on X" section
   const liveOnX = document.querySelector(
     'section[aria-labelledby*="Live"], div[aria-label="Live"]'
@@ -351,11 +376,37 @@ function storeWastedTime() {
   });
 }
 
-function startStopwatch() {
-  if (!isStopwatchRunning) {
-    isStopwatchRunning = true;
-    stopwatchInterval = setInterval(updateStopwatch, 1000);
-    console.log("Stopwatch gestartet");
+function toggleFeed(hideFeed) {
+  if (!hideFeed && window.location.pathname.match(/\/status\/\d+/)) {
+    window.location.href = "https://x.com/home";
+  }
+  const isHomePage = window.location.pathname === "/home";
+  const isStatusPage = window.location.pathname.match(/\/status\/\d+/);
+  const isUserOverview =  /^\/[^/]+$/.test(path);
+
+  if (isHomePage) {
+    const feedElement = document.querySelector(
+      '[aria-label="Timeline: Your Home Timeline"]'
+    );
+
+    if (feedElement) {
+      feedElement.style.visibility = hideFeed ? "visible" : "hidden";
+    }
+  }
+
+  handleStopwatch(hideFeed, isHomePage || isStatusPage || isUserOverview);
+}
+
+function handleStopwatch(hideFeed, isRelevantPage) {
+  if (isRelevantPage) {
+    if (hideFeed) {
+      stopStopwatch();
+      startStopwatch();
+    } else {
+      stopStopwatch();
+    }
+  } else {
+    stopStopwatch(); // Ensure the stopwatch is stopped when conditions are not met
   }
 }
 
@@ -370,22 +421,11 @@ function stopStopwatch() {
   }
 }
 
-// Funktion, um das Element zu verstecken oder anzuzeigen
-function toggleFeed(hideFeed) {
-  const feedElement = document.querySelector(
-    '[aria-label="Timeline: Your Home Timeline"]'
-  );
-
-  if (feedElement && window.location.pathname === "/home") {
-    feedElement.style.visibility = hideFeed ? "visible" : "hidden";
-
-    if (hideFeed) {
-      startStopwatch();
-    } else {
-      stopStopwatch();
-    }
-  } else {
-    stopStopwatch(); // Stelle sicher, dass die Stoppuhr angehalten wird, wenn die Bedingungen nicht erfüllt sind
+function startStopwatch() {
+  if (!isStopwatchRunning) {
+    isStopwatchRunning = true;
+    stopwatchInterval = setInterval(updateStopwatch, 1000);
+    console.log("Stopwatch gestartet");
   }
 }
 

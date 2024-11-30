@@ -204,3 +204,30 @@ If you encounter issues or have questions, feel free to:
 5. **License**: MIT License for open-source usage.
 6. **Contributing**: Guidelines for contributors, including git commands.
 7. **Support and Changelog**: Information for user support and version tracking.
+
+### Used Links
+1. Die Map wurde mittels mapbox.com erstellt.
+https://api.mapbox.com/styles/v1/mapbox/dark-v11.html?title=true&access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA#9.79/47.0252/8.3531
+<br>
+
+2. https://www.freepik.com/free-photo/chat-message-blue-speech-bubble-icon-with-bell-notification-alert-notice-reminder-symbol-conversation-button-icon-symbol-background-3d-illustration_33175351.htm#fromView=search&page=1&position=14&uuid=ab4a27bf-3ebf-4bfd-9350-3930fe658c2d
+<br>
+
+3. Wurde als URL Redirect Icon genutzt
+https://images.app.goo.gl/i1kKj5UBJLrdfEHC9
+<br>
+
+4. Hat zum Thank You Part beim Update dazu beigetragen
+https://images.app.goo.gl/XrtuwbS3wkdPUDgX6
+<br>
+
+5. Wurde für das Bild bei Thank You Part beim Update dazu beigetragen 
+https://www.shutterstock.com/image-photo/happy-man-standing-sunrise-lifting-260nw-2079258889.jpg
+<br>
+
+6. Um dem Bild die genaue Grösse zu geben und herunterzuladen
+https://imageresizer.com/
+<br>
+
+7. HTML und CSS Template das für Update und Installation genutzt wurde
+https://www.free-css.com/free-css-templates/page288/global
