@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X-Feed Cleaner",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A Chrome extension to remove only the home feed on X.com (formerly Twitter) for a cleaner experience.",
   "action": {
     "default_popup": "popup.html",
