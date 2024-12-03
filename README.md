@@ -210,7 +210,8 @@ If you encounter issues or have questions, feel free to:
 https://api.mapbox.com/styles/v1/mapbox/dark-v11.html?title=true&access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA#9.79/47.0252/8.3531
 <br>
 
-2. https://www.freepik.com/free-photo/chat-message-blue-speech-bubble-icon-with-bell-notification-alert-notice-reminder-symbol-conversation-button-icon-symbol-background-3d-illustration_33175351.htm#fromView=search&page=1&position=14&uuid=ab4a27bf-3ebf-4bfd-9350-3930fe658c2d
+2. Notification icon
+https://www.freepik.com/free-photo/chat-message-blue-speech-bubble-icon-with-bell-notification-alert-notice-reminder-symbol-conversation-button-icon-symbol-background-3d-illustration_33175351.htm#fromView=search&page=1&position=14&uuid=ab4a27bf-3ebf-4bfd-9350-3930fe658c2d
 <br>
 
 3. Wurde als URL Redirect Icon genutzt
