@@ -264,6 +264,7 @@ const hideXElements = () => {
       const hideFeed = res.hideFeed ?? false;
 
       // Check if the current page is not one of the excluded pages
+      // TODO: Hier entsteht noch der Fehler, dass wenn ein Benutzer auf den Tabs klickt und den Toggle ausgeschaltet hat, dann kommt er nicht mal mehr zu seinen Messages. Das Problem ist noch offen.
       const currentUrl = window.location.href;
       if (
         !hideFeed &&
