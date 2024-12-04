@@ -16,8 +16,8 @@
 
 body {
   width: 250px;
-  background-color: black;
   color: white;
+  background: linear-gradient(to bottom,darkred, black);
 }
 
 h1 {
