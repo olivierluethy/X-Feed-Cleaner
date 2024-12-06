@@ -2,9 +2,14 @@
 
 function updateToggleText(hideFeed) {
   const toggleElement = document.getElementById("toggOnOff");
+  const switchElement = document.querySelector(".switch");
   toggleElement.innerHTML = hideFeed
     ? "Display Following <strong>On</strong>"
     : "Display Following <strong>Off</strong>";
+
+  switchElement.title = hideFeed
+    ? "View the content of the accounts you follow."
+    : "Don't view the content of accounts you follow.";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -32,10 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const wastedTime = res.wastedTime || {};
       const todayTime = wastedTime[today] || "No time spent today"; // Fallback-Wert, wenn nichts für heute vorhanden ist
       if (todayTime == "No time spent today") {
-        document.getElementById("goToFAQ").innerHTML = `${todayTime}`;
+        document.getElementById("timeConsumption").innerHTML = `${todayTime}`;
       } else {
         document.getElementById(
-          "goToFAQ"
+          "timeConsumption"
         ).innerHTML = `Time spent today: ${todayTime}`;
       }
     });
@@ -46,6 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateTodayTime, 1000);
 });
 
+document
+  .getElementById("timeConsumption")
+  .addEventListener("click", function () {
+    chrome.tabs.create({ url: chrome.runtime.getURL("/pages/timetable.html") });
+  });
+
 document.getElementById("goToFAQ").addEventListener("click", function () {
-  chrome.tabs.create({ url: chrome.runtime.getURL("/pages/timetable.html") });
+  chrome.tabs.create({ url: chrome.runtime.getURL("/pages/FAQ.html") });
 });

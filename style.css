@@ -17,18 +17,24 @@
 body {
   width: 250px;
   color: white;
-  background: linear-gradient(to bottom,darkred, black);
+  background: linear-gradient(to bottom, darkred, black);
 }
 
 h1 {
   text-align: center;
 }
 
+#timeConsumption {
+  padding: 12px 28px;
+}
 #goToFAQ {
+  padding: 8px 12px;
+}
+#goToFAQ,
+#timeConsumption {
   background-color: black;
   border: 1px solid white;
   color: white;
-  padding: 12px 28px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -39,9 +45,16 @@ h1 {
   cursor: pointer;
 }
 
-#goToFAQ:hover {
+#goToFAQ:hover,
+#timeConsumption:hover {
   background-color: white;
   color: black;
+}
+
+#goToFAQ img {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
 }
 
 span {

@@ -258,21 +258,42 @@ const hideXElements = () => {
       section.style.display = "none";
     }
   }
-  // If user jumps to user account content overview
+  // Wenn der Benutzer auf die Benutzerkonto-Übersicht springt
+  // TODO: Einzige Bug ist das beim Community Bereich man dan weitergeleitet wird, wenn hideFeed false ist.
   if (/^\/[^/]+$/.test(path)) {
     chrome.storage.local.get(["hideFeed"], (res) => {
       const hideFeed = res.hideFeed ?? false;
 
-      // Check if the current page is not one of the excluded pages
-      // TODO: Hier entsteht noch der Fehler, dass wenn ein Benutzer auf den Tabs klickt und den Toggle ausgeschaltet hat, dann kommt er nicht mal mehr zu seinen Messages. Das Problem ist noch offen.
+      // Aktuelle URL abrufen
       const currentUrl = window.location.href;
-      if (
-        !hideFeed &&
-        !currentUrl.includes("x.com/home") &&
-        !currentUrl.includes("x.com/explore") &&
-        !currentUrl.includes("x.com/i")
-      ) {
-        window.location.href = "https://x.com/home";
+
+      // Überprüfen, ob hideFeed false ist
+      if (!hideFeed) {
+        // Überprüfen, ob die URL nicht zu den erlaubten Seiten gehört
+        if (
+          !currentUrl.includes("x.com/home") &&
+          !currentUrl.includes("x.com/explore") &&
+          !currentUrl.includes("x.com/i") &&
+          !currentUrl.includes("x.com/messages") &&
+          !currentUrl.includes("x.com/communities")
+        ) {
+          const intervalId = setInterval(() => {
+            // Überprüfen, ob der Benutzer auf seinem eigenen Profil ist
+            const editProfileButton = document.querySelector(
+              "[role='link'][data-testid='editProfileButton']"
+            );
+
+            // Wenn der Edit-Button existiert, ist es das eigene Profil
+            if (editProfileButton) {
+              clearInterval(intervalId); // Intervall stoppen, wenn der Button gefunden wurde
+            } else {
+              // Wenn der Edit-Button nicht existiert, ist es nicht das eigene Profil
+              // Weiterleitung zur Startseite
+              window.location.href = "https://x.com/home";
+              clearInterval(intervalId); // Intervall stoppen, da die Weiterleitung erfolgt
+            }
+          }, 1000); // Alle 1 Sekunde überprüfen
+        }
       }
     });
   }
@@ -383,7 +404,7 @@ function toggleFeed(hideFeed) {
   }
   const isHomePage = window.location.pathname === "/home";
   const isStatusPage = window.location.pathname.match(/\/status\/\d+/);
-  const isUserOverview =  /^\/[^/]+$/.test(path);
+  const isUserOverview = /^\/[^/]+$/.test(path);
 
   if (isHomePage) {
     const feedElement = document.querySelector(
