@@ -23,13 +23,7 @@ function autoClickOnce() {
         // Klicke auf das <a> Element
         anchor.click();
         counter++;
-      } else {
-        console.error('Das <a> Element mit href="/home" wurde nicht gefunden.');
       }
-    } else {
-      console.error("Es gibt nicht genügend presentation divs.");
     }
-  } else {
-    console.error("Das tablist Element wurde nicht gefunden.");
   }
 }

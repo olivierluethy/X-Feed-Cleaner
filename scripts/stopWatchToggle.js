@@ -78,6 +78,7 @@ function stopWatchToggle() {
     const isHomePage = window.location.pathname === "/home";
     const isStatusPage = window.location.pathname.match(/\/status\/\d+/);
     const isUserOverview = /^\/[^/]+$/.test(path);
+    const isBookmarkPage = window.location.pathname === "/i/bookmarks";
 
     if (isHomePage) {
       const feedElement = document.querySelector(
@@ -89,14 +90,34 @@ function stopWatchToggle() {
       }
     }
 
-    handleStopwatch(hideFeed, isHomePage || isStatusPage || isUserOverview);
+    if (isBookmarkPage) {
+      const thirdElement = document.querySelector(
+        'div[aria-label="Home timeline"] > *:nth-child(3)'
+      );
+      if (thirdElement) {
+        thirdElement.style.visibility = hideFeed ? "visible" : "hidden";
+      }
+    }
+
+    handleStopwatch(
+      hideFeed,
+      isHomePage || isStatusPage || isUserOverview || isBookmarkPage
+    );
   }
 
   function handleStopwatch(hideFeed, isRelevantPage) {
     if (isRelevantPage) {
       if (hideFeed) {
-        stopStopwatch();
-        startStopwatch();
+        const editProfileButton = document.querySelector(
+          "[role='link'][data-testid='editProfileButton']"
+        );
+        /* Prüfen, ob sich der Benutzer in seinem eigenen Profil befindet. Wenn dies der Fall ist, sollte die Zeit natürlich nicht gemessen werden. */
+        if (!editProfileButton) {
+          stopStopwatch();
+          startStopwatch();
+        } else {
+          stopStopwatch();
+        }
       } else {
         stopStopwatch();
       }

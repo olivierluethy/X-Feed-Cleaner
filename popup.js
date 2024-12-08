@@ -4,12 +4,12 @@ function updateToggleText(hideFeed) {
   const toggleElement = document.getElementById("toggOnOff");
   const switchElement = document.querySelector(".switch");
   toggleElement.innerHTML = hideFeed
-    ? "Display Following <strong>On</strong>"
-    : "Display Following <strong>Off</strong>";
+    ? "Display Content <strong>On</strong>"
+    : "Display Content <strong>Off</strong>";
 
   switchElement.title = hideFeed
-    ? "View the content of the accounts you follow."
-    : "Don't view the content of accounts you follow.";
+    ? "View the content of the accounts you follow and bookmarks."
+    : "Don't view any content.";
 }
 
 document.addEventListener("DOMContentLoaded", () => {

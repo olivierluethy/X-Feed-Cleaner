@@ -30,6 +30,33 @@ const intervalId = setInterval(() => {
     console.log("community explorating");
     communitiesExplore();
   }
+  // Check if the user is on profile section content overview
+  if (/^\/[^\/]+\/?$/.test(path)) {
+    chrome.storage.local.get(["hideFeed"], (res) => {
+      const hideFeed = res.hideFeed ?? false;
+
+      const currentUrl = window.location.href;
+
+      if (!hideFeed) {
+        if (
+          currentUrl !== "https://x.com/home" &&
+          currentUrl !== "https://x.com/explore" &&
+          currentUrl !== "https://x.com/i" &&
+          currentUrl !== "https://x.com/messages" &&
+          currentUrl != "https://x.com/logout"
+        ) {
+          const editProfileButton = document.querySelector(
+            "[role='link'][data-testid='editProfileButton']"
+          );
+
+          /* Überprüfe ob der "Edit profile" Knopf vorhanden ist zum unterscheiden zwischen eingeloggtem Profil und besuchtem Profil */
+          if (!editProfileButton) {
+            window.location.href = "https://x.com/home";
+          }
+        }
+      }
+    });
+  }
   // If you follow a community
   if (/^\/[^/]+\/communities\/?$/.test(path)) {
     console.log("This is a community");
