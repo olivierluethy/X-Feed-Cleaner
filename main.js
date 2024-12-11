@@ -43,6 +43,7 @@ const intervalId = setInterval(() => {
           currentUrl !== "https://x.com/explore" &&
           currentUrl !== "https://x.com/i" &&
           currentUrl !== "https://x.com/messages" &&
+          currentUrl !== "https://x.com/jobs" &&
           currentUrl != "https://x.com/logout"
         ) {
           const editProfileButton = document.querySelector(
