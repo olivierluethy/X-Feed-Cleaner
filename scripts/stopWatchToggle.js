@@ -45,29 +45,36 @@ function stopWatchToggle() {
   let lastLoggedSeconds = 0; // Speichert die letzte geloggte Zeit (für Differenzen)
 
   function storeWastedTime() {
-    const today = new Date().toISOString().split("T")[0]; // Nur das Datum (YYYY-MM-DD)
+    const today = new Date().toISOString().split("T")[0]; // Get today's date (YYYY-MM-DD)
     const currentTimeInSeconds = hours * 3600 + minutes * 60 + seconds;
 
-    // Differenz zur letzten Speicherung berechnen
+    // Calculate the difference to the last logged time
     const deltaTimeInSeconds = currentTimeInSeconds - lastLoggedSeconds;
 
-    // Bestehende Daten abrufen und aktualisieren
-    chrome.storage.local.get(["wastedTime"], (res) => {
-      const wastedTime = res.wastedTime || {};
-      const previousTime = wastedTime[today]
-        ? timeStringToSeconds(wastedTime[today])
-        : 0;
+    // Check if the delta time is at least 1 second
+    if (deltaTimeInSeconds >= 1) {
+      // Retrieve existing data and update it
+      chrome.storage.local.get(["wastedTime"], (res) => {
+        const wastedTime = res.wastedTime || {};
+        const previousTime = wastedTime[today]
+          ? timeStringToSeconds(wastedTime[today])
+          : 0;
 
-      // Addiere nur die neue Zeitdifferenz
-      const newTimeInSeconds = previousTime + deltaTimeInSeconds;
-      wastedTime[today] = secondsToTimeString(newTimeInSeconds);
+        // Add the new time difference
+        const newTimeInSeconds = previousTime + deltaTimeInSeconds;
+        wastedTime[today] = secondsToTimeString(newTimeInSeconds);
 
-      // Speichern und `lastLoggedSeconds` aktualisieren
-      chrome.storage.local.set({ wastedTime }, () => {
-        console.log("Aktualisierte wastedTime:", wastedTime);
-        lastLoggedSeconds = currentTimeInSeconds; // Aktualisiere die letzte geloggte Zeit
+        // Save and update `lastLoggedSeconds`
+        chrome.storage.local.set({ wastedTime }, () => {
+          console.log("Updated wastedTime:", wastedTime);
+          lastLoggedSeconds = currentTimeInSeconds; // Update the last logged time
+        });
       });
-    });
+    } else {
+      console.log(
+        "Time not sufficient to log. Delta time is less than 1 second."
+      );
+    }
   }
 
   function toggleFeed(hideFeed) {
