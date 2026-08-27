@@ -29,6 +29,25 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleText(isChecked); // Aktualisiere den Text sofort
   });
 
+  // "Block everything" master toggle (issue #6): when on, hides ALL feed
+  // content everywhere, on top of the granular hideFeed behaviour.
+  const checkboxBlockAll = document.getElementById("checkbox-blockall");
+  function updateBlockAllText(blockAll) {
+    document.getElementById("blockAllOnOff").innerHTML = blockAll
+      ? "Block Everything <strong>On</strong>"
+      : "Block Everything <strong>Off</strong>";
+  }
+  chrome.storage.local.get(["blockAll"], (res) => {
+    const blockAll = res.blockAll ?? false;
+    checkboxBlockAll.checked = blockAll;
+    updateBlockAllText(blockAll);
+  });
+  checkboxBlockAll.addEventListener("change", () => {
+    const isChecked = checkboxBlockAll.checked;
+    chrome.storage.local.set({ blockAll: isChecked });
+    updateBlockAllText(isChecked);
+  });
+
   // Dynamisches Update der Zeit
   const today = new Date().toISOString().split("T")[0]; // Hol das heutige Datum im Format YYYY-MM-DD
 

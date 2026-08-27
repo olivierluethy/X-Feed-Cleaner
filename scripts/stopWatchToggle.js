@@ -78,6 +78,16 @@ function stopWatchToggle() {
   }
 
   function toggleFeed(hideFeed) {
+    // Master "block everything" switch (issue #6): when enabled, hide X's whole
+    // central content column on every page (home, explore, profiles, search,
+    // lists, status) while leaving the left nav usable.
+    chrome.storage.local.get(["blockAll"], (res) => {
+      const primary = document.querySelector(
+        'main [data-testid="primaryColumn"]'
+      );
+      if (primary) primary.style.visibility = res.blockAll ? "hidden" : "";
+    });
+
     if (!hideFeed && window.location.pathname.match(/\/status\/\d+/)) {
       window.location.href = "https://x.com/home";
     }
@@ -176,8 +186,10 @@ function stopWatchToggle() {
 
   // Echtzeit-Überwachung von Änderungen im Storage
   chrome.storage.onChanged.addListener((changes) => {
-    if (changes.hideFeed) {
-      toggleFeed(changes.hideFeed.newValue);
+    if (changes.hideFeed || changes.blockAll) {
+      chrome.storage.local.get(["hideFeed"], (res) => {
+        toggleFeed(res.hideFeed ?? false);
+      });
     }
   });
 }
